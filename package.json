@@ -1,0 +1,24 @@
+{
+  "name": "cine-uneti",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema CRUD de películas con Angular, Node.js y MongoDB",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "install:all": "yarn install",
+    "postinstall": "node scripts/run-seed.js",
+    "start": "concurrently -n api,web -c blue,green \"yarn workspace backend start\" \"yarn workspace frontend start\"",
+    "start:backend": "yarn workspace backend start",
+    "start:frontend": "yarn workspace frontend start",
+    "seed": "node scripts/run-seed.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
