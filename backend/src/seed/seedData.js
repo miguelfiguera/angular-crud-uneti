@@ -2,6 +2,47 @@ const TMDB = 'https://image.tmdb.org/t/p/w500';
 
 const seedData = {
   peliculas: [
+    // Clásicos originales del seed
+    {
+      titulo: 'El Padrino',
+      anio: 1972,
+      genero: 'Drama',
+      duracionMinutos: 175,
+      calificacion: 9.2,
+      imagenUrl: `${TMDB}/3bhkrj58Vtu7enYsRolD1fZdja1.jpg`,
+    },
+    {
+      titulo: 'Pulp Fiction',
+      anio: 1994,
+      genero: 'Crimen',
+      duracionMinutos: 154,
+      calificacion: 8.9,
+      imagenUrl: `${TMDB}/vQWk5YBFWF4bZaofAbv0tShwBvQ.jpg`,
+    },
+    {
+      titulo: 'El Señor de los Anillos',
+      anio: 2001,
+      genero: 'Fantasía',
+      duracionMinutos: 178,
+      calificacion: 8.8,
+      imagenUrl: `${TMDB}/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg`,
+    },
+    {
+      titulo: 'Matrix',
+      anio: 1999,
+      genero: 'Ciencia Ficción',
+      duracionMinutos: 136,
+      calificacion: 8.7,
+      imagenUrl: `${TMDB}/dXNAPwY7VrqMAo51EKhhCJfaGb5.jpg`,
+    },
+    {
+      titulo: 'Parásitos',
+      anio: 2019,
+      genero: 'Drama',
+      duracionMinutos: 132,
+      calificacion: 8.6,
+      imagenUrl: `${TMDB}/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg`,
+    },
     // Makoto Shinkai — filmografía completa (cortos, OVA y largometrajes)
     {
       titulo: 'El mundo encerrado',
@@ -150,6 +191,8 @@ const seedData = {
     },
   ],
   directores: [
+    { nombre: 'Francis Ford Coppola', nacionalidad: 'Estados Unidos', peliculasDirigidas: 37, premiosOscar: 5 },
+    { nombre: 'Quentin Tarantino', nacionalidad: 'Estados Unidos', peliculasDirigidas: 10, premiosOscar: 2 },
     { nombre: 'Makoto Shinkai', nacionalidad: 'Japón', peliculasDirigidas: 13, premiosOscar: 0 },
     { nombre: 'Elia Schneider', nacionalidad: 'Venezuela', peliculasDirigidas: 8, premiosOscar: 0 },
     { nombre: 'Miguel Ferrari', nacionalidad: 'Venezuela', peliculasDirigidas: 4, premiosOscar: 0 },
@@ -159,23 +202,27 @@ const seedData = {
   generos: [
     { nombre: 'Anime', descripcion: 'Animación japonesa con estética y narrativa propias', popularidad: 92, colorHex: '#ec4899' },
     { nombre: 'Drama', descripcion: 'Historias centradas en conflictos emocionales', popularidad: 95, colorHex: '#6366f1' },
+    { nombre: 'Crimen', descripcion: 'Historias de delitos, mafia y justicia', popularidad: 86, colorHex: '#64748b' },
     { nombre: 'Comedia', descripcion: 'Entretenimiento ligero con humor', popularidad: 82, colorHex: '#f59e0b' },
     { nombre: 'Ciencia Ficción', descripcion: 'Tecnología avanzada y mundos futuristas', popularidad: 79, colorHex: '#06b6d4' },
     { nombre: 'Fantasía', descripcion: 'Mundos imaginarios y elementos mágicos', popularidad: 85, colorHex: '#8b5cf6' },
   ],
   actores: [
+    { nombre: 'Marlon Brando', edad: 80, nacionalidad: 'Estados Unidos', peliculasDestacadas: 45 },
+    { nombre: 'Keanu Reeves', edad: 60, nacionalidad: 'Canadá', peliculasDestacadas: 58 },
     { nombre: 'Rafael Gil', edad: 45, nacionalidad: 'Venezuela', peliculasDestacadas: 12 },
-    { nombre: 'José Gregorio Rivas', edad: 35, nacionalidad: 'Venezuela', peliculasDestacadas: 8 },
     { nombre: 'Ryunosuke Kamiki', edad: 30, nacionalidad: 'Japón', peliculasDestacadas: 28 },
-    { nombre: 'Mone Kamishiraishi', edad: 26, nacionalidad: 'Japón', peliculasDestacadas: 18 },
-    { nombre: 'Edgardo Román', edad: 40, nacionalidad: 'Venezuela', peliculasDestacadas: 10 },
+    { nombre: 'José Gregorio Rivas', edad: 35, nacionalidad: 'Venezuela', peliculasDestacadas: 8 },
   ],
   resenas: [
-    { pelicula: 'Tu nombre', autor: 'Ana García', calificacion: 10, comentario: 'Obra maestra del anime contemporáneo' },
-    { pelicula: 'Azul y no tan rosa', autor: 'Carlos Ruiz', calificacion: 9, comentario: 'Primer Goya iberoamericano para Venezuela' },
-    { pelicula: 'Huelepega: Ley de la calle', autor: 'Laura Méndez', calificacion: 9, comentario: 'Retrato duro y necesario de Caracas' },
-    { pelicula: 'Punto y raya', autor: 'Miguel Torres', calificacion: 8, comentario: 'Amistad imposible en la frontera' },
-    { pelicula: 'Pipí mil, pupú dos lucas', autor: 'Sofía López', calificacion: 7, comentario: 'Comedia negra con mucha personalidad' },
+    { pelicula: 'El Padrino', autor: 'Ana García', calificacion: 10, comentario: 'Obra maestra del cine clásico' },
+    { pelicula: 'Pulp Fiction', autor: 'Carlos Ruiz', calificacion: 9, comentario: 'Narrativa no lineal brillante' },
+    { pelicula: 'Matrix', autor: 'Laura Méndez', calificacion: 9, comentario: 'Revolucionó los efectos visuales' },
+    { pelicula: 'Tu nombre', autor: 'Miguel Torres', calificacion: 10, comentario: 'Obra maestra del anime contemporáneo' },
+    { pelicula: 'Azul y no tan rosa', autor: 'Sofía López', calificacion: 9, comentario: 'Primer Goya iberoamericano para Venezuela' },
+    { pelicula: 'Huelepega: Ley de la calle', autor: 'Pedro Lander', calificacion: 9, comentario: 'Retrato duro y necesario de Caracas' },
+    { pelicula: 'Parásitos', autor: 'Valentina Ríos', calificacion: 10, comentario: 'Crítica social impecable' },
+    { pelicula: 'El Señor de los Anillos', autor: 'Diego Soto', calificacion: 9, comentario: 'Adaptación fiel y épica' },
   ],
 };
 
