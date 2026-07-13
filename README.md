@@ -33,8 +33,8 @@ La interfaz Angular permite **añadir nombres de películas a una lista**, consu
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/TU_USUARIO/cine-uneti.git
-cd cine-uneti
+git clone https://github.com/miguelfiguera/angular-crud-uneti.git
+cd angular-crud-uneti
 ```
 
 ### 2. Configurar variables de entorno
@@ -63,7 +63,7 @@ MONGODB_DB=cine_uneti
 ### 3. Instalar dependencias (incluye seed automático)
 
 ```bash
-yarn install
+yarn install        # equivalente: npm install
 ```
 
 > Tras `yarn install`, se ejecuta automáticamente el script de seed que crea y pobla la base de datos con las 5 colecciones.
@@ -82,8 +82,10 @@ Scripts por sistema operativo:
 ### 4. Iniciar la aplicación
 
 ```bash
-yarn start
+yarn start          # equivalente: npm start
 ```
+
+> Los scripts internos usan `yarn workspace`, por lo que Yarn debe estar instalado aunque se use `npm install` / `npm start`.
 
 Esto levanta en paralelo:
 
