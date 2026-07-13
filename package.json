@@ -13,7 +13,8 @@
     "start": "concurrently -n api,web -c blue,green \"yarn workspace backend start\" \"yarn workspace frontend start\"",
     "start:backend": "yarn workspace backend start",
     "start:frontend": "yarn workspace frontend start",
-    "seed": "node scripts/run-seed.js"
+    "seed": "node scripts/run-seed.js",
+    "mongo-test": "bash scripts/mongo-test.sh"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
