@@ -1,6 +1,8 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const { getDB } = require('../config/db');
+const { buildSpanishInsensitivePattern } = require('../utils/textSearch');
+const { handleDbError } = require('../utils/handleDbError');
 
 const ALLOWED_COLLECTIONS = ['peliculas', 'directores', 'generos', 'actores', 'resenas'];
 
@@ -26,7 +28,7 @@ function createCrudRouter() {
         .toArray();
       res.json(docs);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleDbError(error, res);
     }
   });
 
@@ -36,13 +38,14 @@ function createCrudRouter() {
       return res.status(400).json({ error: 'Esta consulta solo aplica a la colección peliculas' });
     }
     try {
+      const pattern = buildSpanishInsensitivePattern(req.params.genero);
       const docs = await getDB()
         .collection('peliculas')
-        .find({ genero: req.params.genero })
+        .find({ genero: { $regex: pattern, $options: 'i' } })
         .toArray();
       res.json({ genero: req.params.genero, total: docs.length, peliculas: docs });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleDbError(error, res);
     }
   });
 
@@ -70,7 +73,7 @@ function createCrudRouter() {
         .findOne({ _id: result.insertedId });
       res.status(201).json(created);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleDbError(error, res);
     }
   });
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Pelicula, PeliculaService } from '../../services/pelicula.service';
+import { MongoUnavailableError, Pelicula, PeliculaService } from '../../services/pelicula.service';
 import { UiButtonComponent } from '../../components/ui/button.component';
 import { UiInputComponent } from '../../components/ui/input.component';
 import {
@@ -37,6 +37,7 @@ export class PeliculasComponent implements OnInit {
   mensaje = '';
   generoConsulta = 'Drama';
   resultadoConsulta: Pelicula[] = [];
+  mongoUnavailable = false;
 
   constructor(
     private fb: FormBuilder,
@@ -48,6 +49,7 @@ export class PeliculasComponent implements OnInit {
       titulo: ['', [Validators.required, Validators.minLength(2)]],
       anio: [new Date().getFullYear()],
       genero: ['Drama'],
+      imagenUrl: [''],
     });
     this.cargarPeliculas();
   }
@@ -55,59 +57,66 @@ export class PeliculasComponent implements OnInit {
   cargarPeliculas(): void {
     this.cargando = true;
     this.error = '';
+    this.mongoUnavailable = false;
+
     this.peliculaService.listar().subscribe({
       next: (data) => {
         this.peliculas = data;
         this.cargando = false;
       },
-      error: () => {
-        this.error = 'No se pudo conectar con la API. Verifica que MongoDB y el backend estén activos.';
-        this.cargando = false;
-      },
+      error: (err) => this.handleError(err),
     });
   }
 
   agregarPelicula(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.mongoUnavailable) return;
 
-    const { titulo, anio, genero } = this.form.value;
-    this.peliculaService.crear({ titulo, anio, genero }).subscribe({
+    const { titulo, anio, genero, imagenUrl } = this.form.value;
+    const payload: Partial<Pelicula> = { titulo, anio, genero };
+    if (imagenUrl?.trim()) payload.imagenUrl = imagenUrl.trim();
+
+    this.peliculaService.crear(payload).subscribe({
       next: () => {
         this.mensaje = `"${titulo}" añadida correctamente.`;
-        this.form.patchValue({ titulo: '' });
+        this.form.patchValue({ titulo: '', imagenUrl: '' });
         this.cargarPeliculas();
         setTimeout(() => (this.mensaje = ''), 3000);
       },
-      error: () => {
-        this.error = 'Error al añadir la película.';
-      },
+      error: (err) => this.handleError(err, 'Error al añadir la película.'),
     });
   }
 
   eliminarPelicula(pelicula: Pelicula): void {
-    if (!pelicula._id) return;
+    if (!pelicula._id || this.mongoUnavailable) return;
     this.peliculaService.eliminar(pelicula._id).subscribe({
       next: () => {
         this.mensaje = `"${pelicula.titulo}" eliminada.`;
         this.cargarPeliculas();
         setTimeout(() => (this.mensaje = ''), 3000);
       },
-      error: () => {
-        this.error = 'Error al eliminar la película.';
-      },
+      error: (err) => this.handleError(err, 'Error al eliminar la película.'),
     });
   }
 
   consultarPorGenero(): void {
+    if (this.mongoUnavailable) return;
     this.peliculaService.consultarPorGenero(this.generoConsulta).subscribe({
       next: (res) => {
         this.resultadoConsulta = res.peliculas;
         this.mensaje = `Consulta: ${res.total} película(s) de género "${res.genero}".`;
         setTimeout(() => (this.mensaje = ''), 4000);
       },
-      error: () => {
-        this.error = 'Error en la consulta por género.';
-      },
+      error: (err) => this.handleError(err, 'Error en la consulta por género.'),
     });
+  }
+
+  private handleError(err: unknown, fallback = ''): void {
+    this.cargando = false;
+    if (err instanceof MongoUnavailableError) {
+      this.mongoUnavailable = true;
+      this.error = '';
+      return;
+    }
+    this.error = fallback || 'No se pudo conectar con la API.';
   }
 }

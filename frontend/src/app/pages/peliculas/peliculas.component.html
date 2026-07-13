@@ -6,110 +6,150 @@
     </p>
   </div>
 
-  @if (mensaje) {
-    <div class="rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-      {{ mensaje }}
+  @if (mongoUnavailable) {
+    <div class="rounded-lg border border-amber-500/50 bg-amber-500/10 px-6 py-8 text-center">
+      <p class="text-2xl font-semibold text-amber-400">Please start Mongo DB</p>
+      <p class="mt-2 text-sm text-muted-foreground">
+        Inicia MongoDB, ejecuta <code class="rounded bg-muted px-1.5 py-0.5">yarn seed</code> si es necesario,
+        y recarga esta página.
+      </p>
+      <ui-button class="mt-4" variant="secondary" (click)="cargarPeliculas()">Reintentar</ui-button>
     </div>
-  }
+  } @else {
+    @if (mensaje) {
+      <div class="rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-900 dark:bg-green-950/50 dark:text-green-300">
+        {{ mensaje }}
+      </div>
+    }
 
-  @if (error) {
-    <div class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-      {{ error }}
-    </div>
-  }
+    @if (error) {
+      <div class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
+        {{ error }}
+      </div>
+    }
 
-  <ui-card>
-    <ui-card-header>
-      <ui-card-title>Añadir película</ui-card-title>
-      <ui-card-description>
-        Escribe el nombre de la película y opcionalmente el año y género.
-      </ui-card-description>
-    </ui-card-header>
-    <ui-card-content>
-      <form [formGroup]="form" (ngSubmit)="agregarPelicula()" class="space-y-4">
-        <div class="grid gap-4 sm:grid-cols-3">
-          <div class="space-y-2 sm:col-span-2">
-            <label class="text-sm font-medium" for="titulo">Nombre de la película</label>
-            <ui-input
-              id="titulo"
-              formControlName="titulo"
-              placeholder="Ej: Inception"
-            ></ui-input>
+    <ui-card>
+      <ui-card-header>
+        <ui-card-title>Añadir película</ui-card-title>
+        <ui-card-description>
+          Escribe el nombre, año, género y opcionalmente un enlace a la imagen del póster.
+        </ui-card-description>
+      </ui-card-header>
+      <ui-card-content>
+        <form [formGroup]="form" (ngSubmit)="agregarPelicula()" class="space-y-4">
+          <div class="grid gap-4 sm:grid-cols-3">
+            <div class="space-y-2 sm:col-span-2">
+              <label class="text-sm font-medium" for="titulo">Nombre de la película</label>
+              <ui-input
+                id="titulo"
+                formControlName="titulo"
+                placeholder="Ej: Inception"
+              ></ui-input>
+            </div>
+            <div class="space-y-2">
+              <label class="text-sm font-medium" for="anio">Año</label>
+              <ui-input id="anio" type="number" formControlName="anio"></ui-input>
+            </div>
           </div>
           <div class="space-y-2">
-            <label class="text-sm font-medium" for="anio">Año</label>
-            <ui-input id="anio" type="number" formControlName="anio"></ui-input>
+            <label class="text-sm font-medium" for="genero">Género</label>
+            <ui-input id="genero" formControlName="genero" placeholder="Drama"></ui-input>
           </div>
-        </div>
-        <div class="space-y-2">
-          <label class="text-sm font-medium" for="genero">Género</label>
-          <ui-input id="genero" formControlName="genero" placeholder="Drama"></ui-input>
-        </div>
-        <ui-button type="submit" [disabled]="form.invalid">Añadir a la lista</ui-button>
-      </form>
-    </ui-card-content>
-  </ui-card>
+          <div class="space-y-2">
+            <label class="text-sm font-medium" for="imagenUrl">URL de imagen (póster)</label>
+            <ui-input
+              id="imagenUrl"
+              formControlName="imagenUrl"
+              placeholder="https://image.tmdb.org/t/p/w500/..."
+            ></ui-input>
+          </div>
+          <ui-button type="submit" [disabled]="form.invalid">Añadir a la lista</ui-button>
+        </form>
+      </ui-card-content>
+    </ui-card>
 
-  <ui-card>
-    <ui-card-header>
-      <ui-card-title>Lista de películas</ui-card-title>
-      <ui-card-description>
-        {{ peliculas.length }} película(s) registrada(s) en MongoDB
-      </ui-card-description>
-    </ui-card-header>
-    <ui-card-content>
-      @if (cargando) {
-        <p class="text-sm text-muted-foreground">Cargando...</p>
-      } @else if (peliculas.length === 0) {
-        <p class="text-sm text-muted-foreground">No hay películas. Añade la primera arriba.</p>
-      } @else {
-        <ul class="divide-y rounded-md border">
-          @for (p of peliculas; track p._id) {
-            <li class="flex items-center justify-between gap-4 px-4 py-3">
-              <div>
-                <p class="font-medium">{{ p.titulo }}</p>
-                <p class="text-sm text-muted-foreground">
-                  {{ p.anio }} · {{ p.genero }}
-                  @if (p.calificacion) {
-                    · ⭐ {{ p.calificacion }}
+    <ui-card>
+      <ui-card-header>
+        <ui-card-title>Lista de películas</ui-card-title>
+        <ui-card-description>
+          {{ peliculas.length }} película(s) registrada(s) en MongoDB
+        </ui-card-description>
+      </ui-card-header>
+      <ui-card-content>
+        @if (cargando) {
+          <p class="text-sm text-muted-foreground">Cargando...</p>
+        } @else if (peliculas.length === 0) {
+          <p class="text-sm text-muted-foreground">No hay películas. Añade la primera arriba.</p>
+        } @else {
+          <ul class="divide-y divide-border rounded-md border border-border">
+            @for (p of peliculas; track p._id) {
+              <li class="flex items-center justify-between gap-4 px-4 py-3">
+                <div class="flex min-w-0 items-center gap-4">
+                  @if (p.imagenUrl) {
+                    <img
+                      [src]="p.imagenUrl"
+                      [alt]="'Póster de ' + p.titulo"
+                      class="h-16 w-11 shrink-0 rounded object-cover shadow-sm"
+                      loading="lazy"
+                    />
+                  } @else {
+                    <div class="flex h-16 w-11 shrink-0 items-center justify-center rounded bg-muted text-lg">
+                      🎬
+                    </div>
                   }
-                </p>
-              </div>
-              <ui-button variant="destructive" size="sm" (click)="eliminarPelicula(p)">
-                Eliminar
-              </ui-button>
-            </li>
-          }
-        </ul>
-      }
-    </ui-card-content>
-  </ui-card>
+                  <div class="min-w-0">
+                    <p class="font-medium">{{ p.titulo }}</p>
+                    <p class="text-sm text-muted-foreground">
+                      {{ p.anio }} · {{ p.genero }}
+                      @if (p.calificacion) {
+                        · ⭐ {{ p.calificacion }}
+                      }
+                    </p>
+                  </div>
+                </div>
+                <ui-button variant="destructive" size="sm" (click)="eliminarPelicula(p)">
+                  Eliminar
+                </ui-button>
+              </li>
+            }
+          </ul>
+        }
+      </ui-card-content>
+    </ui-card>
 
-  <ui-card>
-    <ui-card-header>
-      <ui-card-title>Consulta sencilla</ui-card-title>
-      <ui-card-description>Buscar películas por género en MongoDB</ui-card-description>
-    </ui-card-header>
-    <ui-card-content>
-      <div class="flex flex-wrap items-end gap-3">
-        <div class="space-y-2">
-          <label class="text-sm font-medium" for="generoConsulta">Género</label>
-          <ui-input
-            id="generoConsulta"
-            [(ngModel)]="generoConsulta"
-            [ngModelOptions]="{ standalone: true }"
-            placeholder="Drama"
-          ></ui-input>
+    <ui-card>
+      <ui-card-header>
+        <ui-card-title>Consulta sencilla</ui-card-title>
+        <ui-card-description>
+          Buscar películas por género (insensible a mayúsculas y acentos)
+        </ui-card-description>
+      </ui-card-header>
+      <ui-card-content>
+        <div class="flex flex-wrap items-end gap-3">
+          <div class="space-y-2">
+            <label class="text-sm font-medium" for="generoConsulta">Género</label>
+            <ui-input
+              id="generoConsulta"
+              [(ngModel)]="generoConsulta"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="drama, fantasia, ciencia ficcion..."
+            ></ui-input>
+          </div>
+          <ui-button variant="secondary" (click)="consultarPorGenero()">Consultar</ui-button>
         </div>
-        <ui-button variant="secondary" (click)="consultarPorGenero()">Consultar</ui-button>
-      </div>
-      @if (resultadoConsulta.length > 0) {
-        <ul class="mt-4 space-y-1 text-sm">
-          @for (p of resultadoConsulta; track p._id) {
-            <li class="text-muted-foreground">• {{ p.titulo }} ({{ p.anio }})</li>
-          }
-        </ul>
-      }
-    </ui-card-content>
-  </ui-card>
+        @if (resultadoConsulta.length > 0) {
+          <ul class="mt-4 space-y-2">
+            @for (p of resultadoConsulta; track p._id) {
+              <li class="flex items-center gap-3 text-sm text-muted-foreground">
+                @if (p.imagenUrl) {
+                  <img [src]="p.imagenUrl" [alt]="p.titulo" class="h-10 w-7 rounded object-cover" loading="lazy" />
+                }
+                <span>• {{ p.titulo }} ({{ p.anio }})</span>
+              </li>
+            }
+          </ul>
+        }
+      </ui-card-content>
+    </ui-card>
+  }
 </div>
